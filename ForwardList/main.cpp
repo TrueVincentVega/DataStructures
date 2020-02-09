@@ -8,6 +8,15 @@ class Forwardlist
 		Element* pNext;
 		static int count; //статическая переменная (инициализируется за классом)
 	public:
+		const int getData()const
+		{
+			return this->Data;
+		}
+		const Element* getNext()const
+		{
+			return this->pNext;
+		}
+
 		// Constructor:
 		Element(int Data, Element* pNext = nullptr)
 		{
@@ -25,9 +34,18 @@ class Forwardlist
 		friend class Forwardlist;
 	};
 
-	int size;
+	
 	Element* Head;
+	int size;
 public:
+	const Element* getHead()const
+	{
+		return this->Head;
+	}
+	const int get_size()const
+	{
+		return size;
+	}
 	// Constructor:
 	Forwardlist()
 	{
@@ -46,7 +64,6 @@ public:
 		std::cout << "ILConstructor" << std::endl;
 	}
 
-
 	// Создание листа на определенное количества элементов
 	explicit Forwardlist(int number) :Forwardlist() // Делегирование конструкторов (до того как начнет работать один конструктор отработает другой) 
 	// explicit запрещает неявное преобразование типа Forwardlist list1 = 5
@@ -63,7 +80,7 @@ public:
 		std::cout << "MoveConstructor" << this << std::endl;
 	}
 
-	Forwardlist(const Forwardlist& that):Forwardlist() //
+	Forwardlist(const Forwardlist& that) :Forwardlist() //Copy constructor
 	{
 		/*Element* Temp = that.Head;
 		while (Temp)
@@ -75,12 +92,13 @@ public:
 		std::cout << "CopyConstructor:\t" << this << std::endl;
 	}
 
-	/*Forwardlist& operator=(Forwardlist& that)
-	{
-		while (Head) pop_front();
-		for (Element* Temp = that.Head; Temp != nullptr; Temp = Temp->pNext)push_back(Temp->Data);
-		std::cout << "MoveAssigmentOperator:\t" << this << std::endl;
-	}*/
+	//Forwardlist(Forwardlist&& other) //Move constructor (должен принимать неконстантную ссылку)
+	//{
+	//	this->size = other.size;
+	//	this->Head = other.Head;
+	//	other.Head = nullptr;
+	//	std::cout << "MoveConstructor:\t" << this << std::endl;
+	//}
 
 	// Destructor:
 	~Forwardlist()
@@ -213,6 +231,7 @@ public:
 			coun++;
 		}
 		std::cout << "\tcount = " << size << std::endl;
+		
 	}
 	/************************* OPERATORS ***************************/
 	Forwardlist& operator=(const Forwardlist& other)
@@ -226,6 +245,14 @@ public:
 		}
 	}
 
+	Forwardlist& operator=(Forwardlist&& other) noexcept
+	{
+		this->size = other.size;
+		this->Head = other.Head;
+		other.Head = nullptr;
+		std::cout << "MoveAssignment:\t" << this << std::endl;
+		return *this;
+	}
 	int& operator [](int index)
 	{
 		Element* Temp = Head;
@@ -235,17 +262,41 @@ public:
 		}
 		return Temp->Data;
 	}
-
+	friend Forwardlist operator+(const Forwardlist& left, const Forwardlist& right);
 };
 
 
 //#define OTLADKA1
-#define OTLADKA2
+//#define OPERATORS_CONSTRUCTOR_CHECK
+#define BRAIN_OUT
+
 int Forwardlist::Element::count = 0;// инициализация статической переменной
 
+Forwardlist operator+(const Forwardlist& left, const Forwardlist& right)
+{
+	Forwardlist cat = left;
+	for (const Forwardlist::Element* Temp = right.Head; Temp; Temp = Temp->getNext())
+	{
+		cat.push_back(Temp->getData());
+	}
+	std::cout << "Global operator + " << std::endl;
+	return cat;
+}
+
+void print(int arr[])
+{
+	std::wcout << sizeof(arr) << std::endl;
+	std::wcout << typeid(arr).name() << std::endl;
+	for (int i = 0; i < sizeof(arr) / sizeof(int); i++)
+	{
+		std::wcout << arr[i] << "\t";
+	}
+	std::cout << std::endl;
+	
+}
 void main()
 {
-	system("color 0B");
+	system("color 0E");
 	setlocale(LC_ALL, "");
 
 #ifdef OTLADKA1
@@ -275,7 +326,7 @@ void main()
 
 #endif
 
-#ifdef OTLADKA2
+#ifdef OPERATORS_CONSTRUCTOR_CHECK
 
 	//int n = 5;
 	//Forwardlist list1(n);
@@ -292,16 +343,32 @@ void main()
 	//}
 	//std::cout << std::endl;
 
-	Forwardlist list1 = { 2,3,4,5,5 };
-	
-	
-	//Forwardlist list2;
-	list1 = list1;
-	//list2.print();
+	Forwardlist list1 = { 3,5,8,13,21 };
 	list1.print();
+
+	Forwardlist list2 = { 34,55,89 };
+	list2.print();
 	
+	std::cout << "\n----------------------------\n";
+	Forwardlist list3;
+	list3 = list1 + list2;
+	list3.print();
+	std::cout << "\n----------------------------\n";
+	for (int i = 0; i < list3.get_size(); i++)std::cout << list3[i] << std::endl;
 
 #endif
 
-}
+#ifdef BRAIN_OUT
+	int arr[] = { 3,5,8,13,21 };
+	print(arr);
 
+	for (int i : arr)
+	{
+		std::cout << i << "\t";
+	}
+	std::cout << std::endl;
+	
+	Forwardlist list = { 3,5,8,13,21 };
+	list.print();
+#endif
+}
