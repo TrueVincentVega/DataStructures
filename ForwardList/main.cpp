@@ -46,6 +46,7 @@ public:
 		std::cout << "ILConstructor" << std::endl;
 	}
 
+
 	// Создание листа на определенное количества элементов
 	explicit Forwardlist(int number) :Forwardlist() // Делегирование конструкторов (до того как начнет работать один конструктор отработает другой) 
 	// explicit запрещает неявное преобразование типа Forwardlist list1 = 5
@@ -60,6 +61,17 @@ public:
 		this->Head = other.Head;
 		other.Head = nullptr; // Обнуление указателя (чтоб после деструктора не затерлась область памяти на которую сейчас указывает this->str)
 		std::cout << "MoveConstructor" << this << std::endl;
+	}
+
+	Forwardlist(const Forwardlist& that):Forwardlist() //
+	{
+		Element* Temp = that.Head;
+		while (Temp)
+		{
+			push_back(Temp->Data);
+			Temp = Temp->pNext;
+		}
+		std::cout << "CopyConstructor:\t" << this << std::endl;
 	}
 
 	// Destructor:
@@ -183,6 +195,8 @@ public:
 		std::cout << "-------------------------------------------------------------" << std::endl;
 		std::cout << "№" << "\t" << "Address" << "\t\t" << "Data" << "\t" << "pNext" << std::endl;
 		std::cout << "-------------------------------------------------------------" << std::endl;
+		std::cout << "Head:\t" << Head << std::endl;
+		std::cout << "-------------------------------------------------------------" << std::endl;
 		while (Temp)
 		{
 			std::cout << coun << "\t" << Temp << "\t" << Temp->Data << "\t" << Temp->pNext << std::endl;
@@ -212,7 +226,7 @@ int Forwardlist::Element::count = 0;// инициализация статической переменной
 
 void main()
 {
-	system("color 0A");
+	system("color 0B");
 	setlocale(LC_ALL, "");
 
 #ifdef OTLADKA1
@@ -260,9 +274,11 @@ void main()
 	//std::cout << std::endl;
 
 	Forwardlist list1 = { 2,3,4,5,5 };
-	Forwardlist list2;
 	list1.print();
+	
+	Forwardlist list2 = list1;
 	list2.print();
+
 #endif
 
 }
