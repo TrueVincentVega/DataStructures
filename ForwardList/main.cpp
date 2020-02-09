@@ -65,14 +65,22 @@ public:
 
 	Forwardlist(const Forwardlist& that):Forwardlist() //
 	{
-		Element* Temp = that.Head;
+		/*Element* Temp = that.Head;
 		while (Temp)
 		{
 			push_back(Temp->Data);
 			Temp = Temp->pNext;
-		}
+		}*/
+		for (Element* Temp = that.Head; Temp != nullptr; Temp = Temp->pNext)push_back(Temp->Data);
 		std::cout << "CopyConstructor:\t" << this << std::endl;
 	}
+
+	/*Forwardlist& operator=(Forwardlist& that)
+	{
+		while (Head) pop_front();
+		for (Element* Temp = that.Head; Temp != nullptr; Temp = Temp->pNext)push_back(Temp->Data);
+		std::cout << "MoveAssigmentOperator:\t" << this << std::endl;
+	}*/
 
 	// Destructor:
 	~Forwardlist()
@@ -207,6 +215,17 @@ public:
 		std::cout << "\tcount = " << size << std::endl;
 	}
 	/************************* OPERATORS ***************************/
+	Forwardlist& operator=(const Forwardlist& other)
+	{
+		if (this == &other)return *this; // Исключение при list1=list
+		{
+			while (Head)pop_front();
+			for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)push_back(Temp->Data);
+			std::cout << "MoveAssigmentOperator:\t" << this << std::endl;
+			return *this;
+		}
+	}
+
 	int& operator [](int index)
 	{
 		Element* Temp = Head;
@@ -274,10 +293,13 @@ void main()
 	//std::cout << std::endl;
 
 	Forwardlist list1 = { 2,3,4,5,5 };
+	
+	
+	//Forwardlist list2;
+	list1 = list1;
+	//list2.print();
 	list1.print();
 	
-	Forwardlist list2 = list1;
-	list2.print();
 
 #endif
 
